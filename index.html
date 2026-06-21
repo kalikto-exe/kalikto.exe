@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Smit Mehta — Developer & Automation Engineer operating under Kalikto Systems. Deep Slate Electric HUD dashboard." />
+  <title>KALIKTO_SYSTEMS — SMIT MEHTA // DEVELOPER DASHBOARD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- ANALYTICS INJECTION POINT: uncomment and configure GoatCounter or GA4 below -->
+  <!-- <script data-goatcounter="https://YOUR_ACCOUNT.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script> -->
+<script data-goatcounter="https://kalikto.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PRELOADER — kernel initialization log stream, 3-second max
+═══════════════════════════════════════════════════════════════════════ -->
+<div id="loader" aria-live="polite" aria-label="System initialisation">
+  <div class="loader__inner">
+    <div class="loader__brand">[ KALIKTO_SYSTEMS ] — KERNEL INIT v4.9</div>
+    <div class="loader__sub">BOOTSTRAP SEQUENCE STARTING — LOADING CORE SUBSYSTEMS...</div>
+    <div class="loader__log-wrap">
+      <div id="loader-log" class="loader__log"></div>
+    </div>
+    <div class="loader__bar-wrap">
+      <div id="loader-bar" class="loader__bar"></div>
+    </div>
+    <span id="loader-cursor" class="loader__cursor" aria-hidden="true">_</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     CANVAS — bidirectional scroll-driven frame sequence (241 frames)
+═══════════════════════════════════════════════════════════════════════ -->
+<canvas id="animation-canvas" aria-hidden="true"></canvas>
+
+<!-- DECORATIVE FIXED OVERLAYS -->
+<div id="log-left"  class="log-streamer" aria-hidden="true">
+  <span>/sys/net/monitor.sh</span><span>/proc/entropy.log</span>
+  <span>/var/audit/access.log</span><span>/etc/crypto/keys.db</span>
+  <span>/sys/fs/buffer.map</span><span>/proc/net/dev</span>
+  <span>/var/log/syslog</span><span>/tmp/scan_result.json</span>
+  <span>/home/smit/.ssh/config</span><span>/sys/net/monitor.sh</span>
+</div>
+<div id="log-right" class="log-streamer" aria-hidden="true">
+  <span>ENGINE_01::ACTIVE</span><span>FRAME_RATE::60fps</span>
+  <span>BUFFER::CLEAR</span><span>NET_SCAN::PASSIVE</span>
+  <span>ENTROPY::HIGH</span><span>THREAD_POOL::8</span>
+  <span>MEM_USAGE::34%</span><span>UPTIME::99.97%</span>
+  <span>ENGINE_09::ACTIVE</span><span>FRAME_RATE::60fps</span>
+</div>
+<div id="scanlines" aria-hidden="true"></div>
+<div id="pointer-indicator" class="pointer-indicator" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     LEFT DOCK — fixed glass sidebar, gradient mask fades to viewport centre
+═══════════════════════════════════════════════════════════════════════ -->
+<aside class="left-dock" id="left-dock" aria-label="Sidebar navigation">
+  <div class="dock-inner">
+    <!-- Server config block — replaces any personal name tag in the dock -->
+    <div class="dock-server-block">
+      <span class="dsb-label">REMOTE_SERVER</span>
+      <span class="dsb-colon">:</span>
+      <span class="dsb-value">KALIKTO_SYSTEMS</span>
+    </div>
+    <div class="dock-brand">[ SYS_CORE v4.9 // OPERATIONAL ]</div>
+    <nav class="dock-nav" id="dock-nav" aria-label="Section navigation">
+      <a href="#identity"  class="dock-link" data-scroll>[ IDENTITY_CORE ]</a>
+      <a href="#telemetry" class="dock-link" data-scroll>[ TELEMETRY ]</a>
+      <a href="#projects"  class="dock-link" data-scroll>[ PROJECT_ARCHIVE ]</a>
+      <a href="#toolkit"   class="dock-link" data-scroll>[ SEC_TOOLKIT ]</a>
+      <a href="#comms"     class="dock-link" data-scroll>[ COMMS_REGISTRY ]</a>
+    </nav>
+    <div class="dock-live" aria-label="Live system metrics">
+      <div class="dock-live-row"><span class="dk">FPS</span><span class="dv" id="dock-fps">--</span></div>
+      <div class="dock-live-row"><span class="dk">MBR</span><span class="dv" id="dock-clock">--:--:--</span></div>
+      <div class="dock-live-row"><span class="dk">SES</span><span class="dv" id="dock-uptime">00:00:00</span></div>
+      <div class="dock-live-row"><span class="dk">BAT</span><span class="dv" id="dock-battery">--</span></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MOBILE TOP NAV (visible only below 768px) -->
+<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
+  <div class="mobile-nav__brand">[ KALIKTO_SYSTEMS ]</div>
+  <button class="mobile-nav__hamburger" id="mobile-hamburger"
+    aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobile-nav-links">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="mobile-nav__links" id="mobile-nav-links">
+    <a href="#identity"  class="mobile-nav__link" data-scroll>IDENTITY</a>
+    <a href="#telemetry" class="mobile-nav__link" data-scroll>TELEMETRY</a>
+    <a href="#projects"  class="mobile-nav__link" data-scroll>ARCHIVE</a>
+    <a href="#toolkit"   class="mobile-nav__link" data-scroll>TOOLKIT</a>
+    <a href="#comms"     class="mobile-nav__link" data-scroll>COMMS</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     MAIN UI — revealed post-boot, margin-left clears the dock
+═══════════════════════════════════════════════════════════════════════ -->
+<div id="main-ui">
+<div class="main-content">
+
+  <!-- ── SECTION A: KALIKTO MAINFRAME TERMINAL LOGIN SEQUENCE ─────── -->
+  <section id="identity" class="section hero-section">
+    <div class="hero-inner">
+
+      <!-- Integrated terminal header: brand bar row + dots row -->
+      <div class="hero-terminal" id="hero-terminal" role="region" aria-label="System terminal">
+        <div class="ht-brand-bar">
+          <span class="ht-brand-text">K A L I K T O &nbsp; S Y S T E M S</span>
+        </div>
+        <div class="ht-header">
+          <span class="ht-dot ht-dot--red"></span>
+          <span class="ht-dot ht-dot--yellow"></span>
+          <span class="ht-dot ht-dot--green"></span>
+          <span class="ht-title">CENTER_TERMINAL_MAINFRAME</span>
+        </div>
+        <div class="ht-body">
+          <div id="hero-term-log" class="ht-log" aria-live="polite"></div>
+          <span class="ht-blink-cursor" id="hero-term-cursor" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <!-- Post-boot diagnostic handshake text flash (0.5s after reveal) -->
+      <div id="hero-hud-verify" class="hero-hud-verify" aria-live="polite"></div>
+
+      <div class="hero-actions" id="hero-actions" style="opacity:0;transition:opacity 0.6s ease;">
+        <a href="#projects" class="btn-primary" data-scroll>&gt;&gt; ENTER_ARCHIVE</a>
+        <a href="#comms"    class="btn-secondary" data-scroll>OPEN_CHANNEL &nearr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION B: SYSTEM PERFORMANCE TELEMETRY ──────────────────── -->
+  <section id="telemetry" class="section">
+    <div class="section-header">
+      <span class="section-tag">TELEMETRY // 00</span>
+      <h2 class="section-title">SYSTEM STATUS PANEL</h2>
+      <p class="section-sub">Real-time frame render telemetry and local node matrix. Performance optimizer adapts canvas output to device capabilities.</p>
+    </div>
+    <div class="telemetry-grid">
+
+      <!-- Performance Optimizer -->
+      <div class="glass-panel perf-panel">
+        <div class="widget-label">[ PERFORMANCE_OPTIMIZER ]</div>
+        <div class="perf-rows">
+          <div class="perf-row"><span class="perf-key">RENDER_FPS</span><span class="perf-val" id="perf-fps">-- fps</span></div>
+          <div class="perf-row"><span class="perf-key">FRAME_TIME</span><span class="perf-val" id="perf-ft">-- ms</span></div>
+          <div class="perf-row"><span class="perf-key">RENDER_MODE</span><span class="perf-val cyan" id="perf-mode">HIGH</span></div>
+          <div class="perf-row"><span class="perf-key">CANVAS_SKIP</span><span class="perf-val" id="perf-skip">1x (EVERY FRAME)</span></div>
+          <div class="perf-row"><span class="perf-key">DEVICE_CLASS</span><span class="perf-val" id="perf-device">DETECTING...</span></div>
+          <div class="perf-row"><span class="perf-key">OPTM_STATUS</span><span class="perf-val" id="perf-status">INITIALISING...</span></div>
+        </div>
+        <canvas id="fps-graph" class="fps-graph" aria-label="FPS history graph" aria-hidden="true"></canvas>
+        <div class="perf-graph-label">&#9654; FPS HISTORY (LAST 30s)</div>
+      </div>
+
+      <!-- Local Node Matrix -->
+      <div class="glass-panel node-panel">
+        <div class="widget-label">[ LOCAL_NODE_MATRIX ]</div>
+        <div class="node-rows">
+          <div class="node-row"><span class="node-key">MBR_CLOCK</span><span class="node-val cyan" id="node-clock">--:--:-- IST</span></div>
+          <div class="node-row"><span class="node-key">PLATFORM</span><span class="node-val" id="node-platform">DETECTING...</span></div>
+          <div class="node-row"><span class="node-key">BROWSER</span><span class="node-val" id="node-browser">DETECTING...</span></div>
+          <div class="node-row"><span class="node-key">BATTERY</span><span class="node-val" id="node-battery">QUERYING API...</span></div>
+          <div class="node-row"><span class="node-key">SCREEN_RES</span><span class="node-val" id="node-res">MEASURING...</span></div>
+          <div class="node-row"><span class="node-key">SESSION_UP</span><span class="node-val" id="node-session">00:00:00</span></div>
+          <div class="node-row"><span class="node-key">FRAME_IDX</span><span class="node-val" id="node-frame">0 / 241</span></div>
+          <div class="node-row"><span class="node-key">CANVAS_SRC</span><span class="node-val" id="node-src">--</span></div>
+          <div class="node-row"><span class="node-key">POINTER</span><span class="node-val" id="node-pointer">DETECTING...</span></div>
+        </div>
+      </div>
+
+    </div><!-- /.telemetry-grid -->
+  </section>
+
+  <!-- ── SECTION C: PROJECT DIRECTORY ─────────────────────────────── -->
+  <section id="projects" class="section">
+    <div class="section-header">
+      <span class="section-tag">PROJECT_ARCHIVE // 01</span>
+      <h2 class="section-title">ENGINEERING DIRECTORY</h2>
+      <p class="section-sub">25 precision-engineered automation and security tools across four technical sectors. Click any card to access a structured terminal brief.</p>
+    </div>
+    <!-- Sectors and project cards rendered dynamically by main.js renderProjects() -->
+    <div id="project-directory" aria-label="Project directory"></div>
+  </section>
+
+  <!-- ── SECTION D: SECURE OPERATIONS TOOLKIT ─────────────────────── -->
+  <section id="toolkit" class="section">
+    <div class="section-header">
+      <span class="section-tag">SECURE_OPS // 02</span>
+      <h2 class="section-title">OPERATIONS TOOLKIT</h2>
+      <p class="section-sub">Active security and network diagnostic instruments. Focusing any input field instantly freezes canvas scroll calculations to guarantee zero typing lag.</p>
+    </div>
+    <div class="tools-row">
+
+      <!-- TOOL 1: Password Evaluator -->
+      <div class="glass-panel tool-panel">
+        <div class="widget-label">[ 01 // PASSWORD_EVALUATOR ]</div>
+        <div class="pass-row">
+          <input
+            type="password" id="pass-input" class="hud-input"
+            placeholder="INPUT PASSPHRASE FOR ENTROPY SCAN..."
+            autocomplete="new-password" spellcheck="false"
+            aria-label="Passphrase for entropy analysis"
+          />
+          <button id="pass-toggle" class="icon-btn" aria-label="Toggle password visibility">&#9644;</button>
+        </div>
+        <div id="pass-output" class="pass-output" aria-live="polite">AWAITING INPUT — SCANNER STANDING BY</div>
+        <div class="bar-wrap" aria-hidden="true"><div id="pass-bar" class="bar-fill"></div></div>
+        <div id="pass-hints" class="pass-hints" aria-live="polite"></div>
+      </div>
+
+      <!-- TOOL 2: Data Breach Simulator -->
+      <div class="glass-panel tool-panel">
+        <div class="widget-label">[ 02 // BREACH_SIMULATOR ]</div>
+        <div class="breach-row">
+          <input
+            type="email" id="breach-input" class="hud-input"
+            placeholder="ENTER EMAIL ADDRESS FOR BREACH SCAN..."
+            autocomplete="off" spellcheck="false"
+            aria-label="Email address for breach analysis"
+          />
+          <button id="breach-scan-btn" class="btn-primary btn-sm" aria-label="Run breach scan">SCAN</button>
+        </div>
+        <div id="breach-output" class="breach-output" aria-live="polite">
+          AWAITING TARGET ADDRESS — SCANNER STANDING BY
+        </div>
+      </div>
+
+      <!-- TOOL 3: Live Automatic Network Diagnostic
+           100% automated — reads navigator.connection, SSL, origin.
+           Populates instantly on page load. No user input needed. -->
+      <div class="glass-panel tool-panel">
+        <div class="widget-label">[ 03 // LIVE_NETWORK_DIAGNOSTIC ]</div>
+        <div class="widget-sub">AUTO-SCAN // NO INPUT REQUIRED</div>
+        <div id="netdiag-output" class="breach-output" aria-live="polite">
+          [ INITIALISING NETWORK PROBE... ]
+        </div>
+      </div>
+
+    </div><!-- /.tools-row -->
+  </section>
+
+  <!-- ── SECTION E: TACTICAL COMMUNICATION REGISTRY ───────────────── -->
+  <section id="comms" class="section">
+    <div class="section-header">
+      <span class="section-tag">TACTICAL_COMMS // 03</span>
+      <h2 class="section-title">COMMUNICATION REGISTRY</h2>
+      <p class="section-sub">Secure professional outlinks. Each node operates with its own routing protocol.</p>
+    </div>
+    <div class="comms-grid">
+
+      <a href="https://t.me/kalikto" target="_blank" rel="noopener" class="comms-card comms-card--telegram">
+        <span class="cc-svc">SECURE_CHAT</span>
+        <span class="cc-label">TELEGRAM</span>
+        <span class="cc-handle">t.me/kalikto</span>
+        <span class="cc-status">[ CHANNEL: OPEN ]</span>
+      </a>
+
+      <a href="https://github.com/kalikto-exe" target="_blank" rel="noopener" class="comms-card comms-card--github">
+        <span class="cc-svc">REPOSITORY</span>
+        <span class="cc-label">GITHUB</span>
+        <span class="cc-handle">kalikto-exe</span>
+        <span class="cc-status">[ ACTIVE ]</span>
+      </a>
+
+      <a href="https://medium.com/@kalikto" target="_blank" rel="noopener" class="comms-card comms-card--medium">
+        <span class="cc-svc">INTEL_LOGS</span>
+        <span class="cc-label">MEDIUM</span>
+        <span class="cc-handle">@kalikto</span>
+        <span class="cc-status">[ PUBLISHING ]</span>
+      </a>
+
+      <a href="mailto:kalikto-exe@gmail.com" class="comms-card comms-card--email">
+        <span class="cc-svc">NET_ADDRESS</span>
+        <span class="cc-label">GMAIL</span>
+        <span class="cc-handle">kalikto-exe@gmail.com</span>
+        <span class="cc-status">[ SECURE_INBOX ]</span>
+      </a>
+
+      <!-- Instagram: 4-line credential handshake → opens private URL -->
+      <div class="comms-card comms-card--instagram" id="insta-card"
+        role="button" tabindex="0" aria-label="Connect to Instagram private node">
+        <span class="cc-svc">PRIVATE_NODE</span>
+        <span class="cc-label">INSTAGRAM</span>
+        <span class="cc-handle">@smit_mehtaa</span>
+        <span class="cc-status">[ CLEARANCE: RESTRICTED ]</span>
+      </div>
+
+    </div><!-- /.comms-grid -->
+  </section>
+
+  <footer class="site-footer">
+    <span class="site-footer__copy">KLK-001 // &copy; 2025 KALIKTO_SYSTEMS — SMIT MEHTA</span>
+    <span class="site-footer__ref">ALL SYSTEMS NOMINAL // v4.8</span>
+  </footer>
+
+</div><!-- /.main-content -->
+</div><!-- /#main-ui -->
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PROJECT TERMINAL PANEL — slide-in overlay, 3-block typewriter log
+═══════════════════════════════════════════════════════════════════════ -->
+<div id="project-panel" class="project-panel" aria-hidden="true" role="dialog" aria-label="Project terminal brief">
+  <div class="project-panel__header">
+    <div>
+      <span class="project-panel__eyebrow">ARCHIVE // TERMINAL BRIEF</span>
+      <span class="project-panel__ref" id="panel-ref">ENGINE // 00</span>
+    </div>
+    <button class="btn-return" id="panel-back" aria-label="Return to archive">
+      &larr;&nbsp;[ RETURN_TO_ARCHIVE ]
+    </button>
+  </div>
+  <div class="project-panel__body">
+    <div class="project-panel__log-col">
+      <div class="widget-label">// TERMINAL OUTPUT — LIVE STREAM</div>
+      <div id="panel-log" class="project-panel__log" aria-live="polite"></div>
+    </div>
+    <div id="panel-detail" class="project-panel__detail">
+      <h3 class="panel-title" id="panel-title"></h3>
+      <div class="panel-tags" id="panel-tags"></div>
+      <p class="panel-desc" id="panel-desc"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     INSTAGRAM CREDENTIAL HANDSHAKE TERMINAL — 4-line typewriter (~1s)
+═══════════════════════════════════════════════════════════════════════ -->
+<div id="insta-terminal" class="insta-terminal" aria-hidden="true" role="dialog" aria-label="Instagram secure routing">
+  <div class="insta-terminal__box">
+    <div class="insta-terminal__header">[ ARCHITECT // DEPLOY_CORE ] — SECURE ROUTING ENGINE</div>
+    <div id="insta-log" class="insta-terminal__log" aria-live="polite"></div>
+    <button id="insta-close" class="insta-terminal__close" aria-label="Close terminal">[ CLOSE_TERMINAL ]</button>
+  </div>
+</div>
+
+<!-- Fixed bottom session status bar -->
+<div id="session-tracker" class="session-tracker" aria-live="off" aria-atomic="true">
+  [ ACTIVE_SESSION: <span id="session-time">00:00:00</span> ] // [ NODE: SECURE ]
+</div>
+
+<!-- Scroll to top -->
+<button id="scroll-top-btn" aria-label="Return to top">&#8593;</button>
+
+<!-- Supabase CDN (available for future DB features) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
